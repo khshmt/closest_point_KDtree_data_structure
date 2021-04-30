@@ -2,9 +2,9 @@
 ### this algorithm reads data from a file of 2D points then finds the closest points to a point the user enters it through input stream and enters the accepted tolerance for the closest points.
 ---
 ```bash
-git clone https://github.com/khshmt/cpp_algorithms.git
+https://github.com/khshmt/closest_point_KDtree_data_structure.git
 
-cd cpp_algorithms
+cd closest_point_KDtree_data_structure
 
 g++ -std=c++11 closest_point.cpp -o closest_point 
 
