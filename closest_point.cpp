@@ -20,6 +20,7 @@
 #include <math.h>
 #include <map>
 #include <fstream>
+#include <memory>
 
 typedef unsigned int unit;
 
@@ -189,7 +190,8 @@ int main()
         float y = std::stof(num_2);
         points.push_back({x,y});
     }
-    KdTree* tree(new KdTree) ;
+    
+    std::shared_ptr<KdTree> tree(std::make_shared<KdTree>());
     int id = 0;
     for(auto point: points)
     {
@@ -208,6 +210,5 @@ int main()
     else
         std::cout << "there is no points match that tolerance !!"<< std::endl;
 
-    
     return 0;
 }
