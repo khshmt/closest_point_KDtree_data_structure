@@ -29,11 +29,7 @@ class Point
     public:
         Point(float x_=0, float y_=0) : x{x_}, y{y_}{} 
 
-        friend Point operator+(const Point& point_1, const Point& point_2);
-        
-        friend Point  operator-(const Point& point_1, const Point& point_2);
-        friend Point  findClosestPoint(std::vector<Point>& vec);
-        friend double eculdianDistance(Point& p1, Point& p2);
+        friend float eculdianDistance(Point& p1, Point& p2);
         
         float  get(int dim)
         {
@@ -51,38 +47,13 @@ class Point
         float x, y;
 };
 
-Point operator+(const Point& point_1, const Point& point_2)
+float eculdianDistance(Point& p1, Point& p2)
 {
-    float x__ = point_1.x + point_2.x;
-    float y__ = point_1.y + point_2.y;
-    return Point(x__, y__);
-}
-Point operator -(const Point& point_1, const Point& point_2)
-{
-    float x__ = point_1.x - point_2.x;
-    float y__ = point_1.y - point_2.y;
-    return Point(x__, y__);
-}
-
-double eculdianDistance(Point& p1, Point& p2)
-{
-    double x_diff_sq = pow((p2.x-p1.x), 2);
-    double y_diff_sq = pow((p2.y-p1.y), 2);
+    float x_diff_sq = pow((p2.x-p1.x), 2);
+    float y_diff_sq = pow((p2.y-p1.y), 2);
     return std::sqrt(x_diff_sq+y_diff_sq);
 }
 
-//O(N)
-Point findClosestPoint(std::vector<Point>& points, Point base)
-{
-    std::map<float, Point> map_; 
-    for(auto point : points)
-    {
-        float dist = eculdianDistance(base, point);
-        map_.emplace(std::make_pair(dist, point));
-    }
-    auto it = map_.begin();
-    return it->second;
-}
 /*===========================================*/
 struct Node
 {
@@ -133,9 +104,7 @@ to a specific distance tolerance
 		{
 			if( (node->point.get(0) >= (target.get(0)-distanceTol) && node->point.get(0) <= (target.get(0)+distanceTol)) && (node->point.get(1) >= (target.get(1)-distanceTol) && node->point.get(1) <= (target.get(1)+distanceTol)))
 			{
-				float x_diff = node->point.get(0) - target.get(0);
-				float y_diff = node->point.get(1) - target.get(1);
-				float distance = std::sqrt( (x_diff*x_diff) + (y_diff*y_diff) );
+				float distance = eculdianDistance(node->point, target);
 				if(distance < distanceTol)
 					ids.push_back(node->id);
 			}
