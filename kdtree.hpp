@@ -1,3 +1,6 @@
+#ifndef __KDTREE_H__
+#define __KDTREE_H__
+
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -115,3 +118,5 @@ to a specific distance tolerance
 	
 
 };
+
+#endif
