@@ -21,6 +21,7 @@
 #include <map>
 #include <fstream>
 #include <memory>
+#include <numeric>
 
 typedef unsigned int unit;
 
@@ -98,29 +99,32 @@ Insert method used to insert point in the KDtree architecture
 Search method used to search allover the tree for points which is the closest to a given point according
 to a specific distance tolerance
 */
-	void searchHelper(Point target, Node* node, int depth, float distanceTol, std::vector<int>& ids)
+	void searchHelper(Point target, Node* node, int depth, std::vector<int>& ids, std::map<float, Point>& dis_point)
 	{
+        float min_distance = std::numeric_limits<double>::max();
 		if(node != NULL)
 		{
-			if( (node->point.get(0) >= (target.get(0)-distanceTol) && node->point.get(0) <= (target.get(0)+distanceTol)) && (node->point.get(1) >= (target.get(1)-distanceTol) && node->point.get(1) <= (target.get(1)+distanceTol)))
-			{
-				float distance = eculdianDistance(node->point, target);
-				if(distance < distanceTol)
-					ids.push_back(node->id);
-			}
 
-			if((target.get(depth%2)-distanceTol) < node->point.get(depth%2))
-				searchHelper(target, node->left, depth+1, distanceTol, ids);
-			if((target.get(depth%2)+distanceTol) > node->point.get(depth%2))
-				searchHelper(target, node->right, depth+1, distanceTol, ids);
+			float distance = eculdianDistance(node->point, target);
+			if(distance < min_distance)
+            {
+				dis_point.emplace(std::make_pair(distance, node->point));
+                ids.push_back(node->id);
+            }
+
+			if((target.get(depth%2)) < node->point.get(depth%2))
+				searchHelper(target, node->left, depth+1, ids, dis_point);
+			if((target.get(depth%2)) > node->point.get(depth%2))
+				searchHelper(target, node->right, depth+1, ids, dis_point);
 		}
 	}
 
-	std::vector<int> search(Point target, float distanceTol)
+	std::map<float, Point> search(Point target)
 	{
 		std::vector<int> ids;
-		searchHelper(target, root, 0, distanceTol, ids);
-		return ids;
+        std::map<float, Point> dis_point;
+		searchHelper(target, root, 0, ids, dis_point);
+		return dis_point;
 	}
 	
 
@@ -128,13 +132,11 @@ to a specific distance tolerance
 /*==========================MAIN FUNCTION================================*/
 int main()
 {
-    float X, Y, disTol;
+    float X, Y;
     std::cout << "ENTER X VALUE ";
     std::cin >> X;
     std::cout << "ENTER Y VALUE ";
     std::cin >> Y;
-    std::cout << "ENTER THE WANTED TOLERANCE ";
-    std::cin >> disTol;
 
     Point p(X,Y);
     
@@ -168,16 +170,11 @@ int main()
         ++id;
     }
 
-    std::vector<int> ids = tree->search(p, disTol);
-    if(ids.size()>0)
-    { 
-        for(auto id_ : ids)
-        {
-            points.at(id_).printPoint();
-        }
-    }
-    else
-        std::cout << "there is no points match that tolerance !!"<< std::endl;
+    std::map<float, Point> dis_point = tree->search(p);
+ 
+    dis_point.begin()->second.printPoint();
+    std::cout << dis_point.begin()->first << std::endl;
+ 
 
     return 0;
 }

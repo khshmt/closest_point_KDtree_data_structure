@@ -1,5 +1,5 @@
 # Closest Point K-D tree data structure.
-### this algorithm reads data from a file of 2D points then finds the closest points to a point the user enters it through input stream and enters the accepted tolerance for the closest points.
+### this algorithm reads data from a file of 2D points then finds the closest point to a point the user enters it through input stream.
 ---
 ```bash
 https://github.com/khshmt/closest_point_KDtree_data_structure.git
