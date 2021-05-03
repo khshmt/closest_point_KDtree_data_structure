@@ -40,7 +40,7 @@ float eculdianDistance(Point& p1, Point& p2)
 }
 
 /*==================================================================================*/
-struct Node
+class Node
 {
     public:
         Point point;
@@ -53,7 +53,7 @@ struct Node
 };
 
 
-struct KdTree
+class KdTree
 {
     public:
         Node* root;
