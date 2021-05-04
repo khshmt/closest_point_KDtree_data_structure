@@ -3,7 +3,7 @@
 
 ---
 > ## prerequisites
----
+
 * **g++-7.5 or g++-5.5**
 * **OpenCV c++ API**
 
