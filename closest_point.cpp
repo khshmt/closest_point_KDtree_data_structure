@@ -15,6 +15,7 @@
 **find the closest points of O's to x position**
 */
 #include "kdtree.hpp"
+#include <opencv2/opencv.hpp>
 
 /*==========================MAIN FUNCTION================================*/
 int main()
@@ -64,6 +65,25 @@ int main()
     std::cout << "the closest point to your point is ==> ";
     dis_point.begin()->second.printPoint();
     std::cout << "the distance from your point to the closest point is ==> "<< dis_point.begin()->first << std::endl;
- 
+    
+    
+    //visualize result using OpenCV
+    cv::Mat img = cv::Mat::zeros(cv::Size(500, 500), CV_8UC3);
+    
+    for(auto pt : points)
+    {
+
+        cv::circle(img, cv::Point2d(pt.get(0), (500-pt.get(1))), 3, cv::Scalar(0, 255, 255), -1);
+    }
+    cv::circle(img, cv::Point2d(p.get(0), (500-p.get(1))), 3, cv::Scalar(0, 255, 0), -1);
+    
+    float x_closest = dis_point.begin()->second.get(0);
+    float y_closest = dis_point.begin()->second.get(1);
+    
+    cv::line(img, cv::Point2d(p.get(0), (500-p.get(1))), cv::Point2d(x_closest, (500-y_closest)), cv::Scalar(0, 0, 255), 1 );
+    
+    cv::imshow("visulaization of the result", img);
+    cv::waitKey(0);
+    
     return 0;
 }

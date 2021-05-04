@@ -88,9 +88,8 @@ Insert method used to insert point in the KDtree architecture
 Search method used to search allover the tree for points which is the closest to a given point according
 to a specific distance tolerance
 */
-        void searchHelper(Point target, Node* node, int depth, std::vector<int>& ids, std::map<float, Point>& dis_point)
+        void searchHelper(Point target, Node* node, int depth, std::vector<int>& ids, std::map<float, Point>& dis_point, float min_distance)
         {
-            float min_distance = std::numeric_limits<double>::max();
             if(node != NULL)
             {
 
@@ -102,17 +101,17 @@ to a specific distance tolerance
                 }
 
                 if((target.get(depth%2)) < node->point.get(depth%2))
-                    searchHelper(target, node->left, depth+1, ids, dis_point);
+                    searchHelper(target, node->left, depth+1, ids, dis_point, min_distance);
                 if((target.get(depth%2)) > node->point.get(depth%2))
-                    searchHelper(target, node->right, depth+1, ids, dis_point);
+                    searchHelper(target, node->right, depth+1, ids, dis_point, min_distance);
             }
         }
-
         std::map<float, Point> search(Point target)
         {
             std::vector<int> ids;
             std::map<float, Point> dis_point;
-            searchHelper(target, root, 0, ids, dis_point);
+            float min_distance = std::numeric_limits<float>::max();
+            searchHelper(target, root, 0, ids, dis_point, min_distance);
             return dis_point;
         }
 	
