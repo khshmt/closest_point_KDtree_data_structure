@@ -52,12 +52,11 @@ int main()
         points.push_back({x,y});
     }
     
-    std::shared_ptr<KdTree> tree(std::make_shared<KdTree>());
-    int id = 0;
-    for(auto point: points)
+    KdTree* tree(new KdTree());
+    
+    for(const auto& point : points)
     {
-        tree->insert(point, id);
-        ++id;
+        tree->insert(point);
     }
 
     std::map<float, Point> dis_point = tree->search(p);
@@ -68,11 +67,10 @@ int main()
     
     
     //visualize result using OpenCV
-    cv::Mat img = cv::Mat::zeros(cv::Size(500, 500), CV_8UC3);
-    
+    cv::Mat img = cv::Mat::zeros(cv::Size(500, 500), CV_8UC3);    
+     
     for(auto pt : points)
     {
-
         cv::circle(img, cv::Point2d(pt.get(0), (500-pt.get(1))), 3, cv::Scalar(0, 255, 255), -1);
     }
     cv::circle(img, cv::Point2d(p.get(0), (500-p.get(1))), 3, cv::Scalar(0, 255, 0), -1);

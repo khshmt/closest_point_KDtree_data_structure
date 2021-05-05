@@ -47,11 +47,10 @@ class Node
 {
     public:
         Point point;
-        int id;
         Node* left;
         Node* right;
 
-        Node(Point p, int setId) : point(p), id(setId), left(NULL), right(NULL)
+        Node(Point p) : point(p), left(NULL), right(NULL)
         {}
 };
 
@@ -63,59 +62,64 @@ class KdTree
         KdTree():root(NULL)
         {}
 /*=========================================Insert method=======================================
-Insert method used to insert point in the KDtree architecture 
-*/
-        void insertHelper(Node** node, unit depth, Point point, int id)
+Insert method used to insert point in the KDtree architecture */
+
+        void insertHelper(Node** node, unit depth ,Point point)
         {
             if(*node == NULL)
-                *node = new Node(point, id);
+                *node = new Node(point);
             else
             {
                 unit cd = depth % 2;
                 
                 if(point.get(cd) < (*node)->point.get(cd))
-                    insertHelper(&((*node)->left), depth+1, point, id);
+                    insertHelper(&((*node)->left), depth+1, point);
                 else	
-                    insertHelper(&((*node)->right), depth+1, point, id);
+                    insertHelper(&((*node)->right), depth+1, point);
             }
         }
-
-        void insert(Point point, int id)
+        void insert(Point point)
         {
-            insertHelper(&root, 0, point, id);	
+            insertHelper(&root, 0 ,point);	
         }
+
 /*==================================================search methods================================
 Search method used to search allover the tree for points which is the closest to a given point according
 to a specific distance tolerance
 */
-        void searchHelper(Point target, Node* node, int depth, std::vector<int>& ids, std::map<float, Point>& dis_point, float min_distance)
+        void searchHelper(Point target, Node* node, int depth, std::map<float, Point>& dis_point, float min_distance)
         {
             if(node != NULL)
             {
 
                 float distance = eculdianDistance(node->point, target);
+                
                 if(distance < min_distance)
-                {
                     dis_point.emplace(std::make_pair(distance, node->point));
-                    ids.push_back(node->id);
-                }
-
+                
                 if((target.get(depth%2)) < node->point.get(depth%2))
-                    searchHelper(target, node->left, depth+1, ids, dis_point, min_distance);
+                {
+                    searchHelper(target, node->left, depth+1, dis_point, min_distance);
+                    searchHelper(target, node->right, depth+1, dis_point, min_distance);
+                }
                 if((target.get(depth%2)) > node->point.get(depth%2))
-                    searchHelper(target, node->right, depth+1, ids, dis_point, min_distance);
+                {
+                    searchHelper(target, node->right, depth+1, dis_point, min_distance);
+                    searchHelper(target, node->left, depth+1, dis_point, min_distance);
+                }
             }
         }
         std::map<float, Point> search(Point target)
         {
-            std::vector<int> ids;
             std::map<float, Point> dis_point;
             float min_distance = std::numeric_limits<float>::max();
-            searchHelper(target, root, 0, ids, dis_point, min_distance);
+            searchHelper(target, root, 1, dis_point, min_distance);
             return dis_point;
         }
 	
 
 };
+
+
 
 #endif
