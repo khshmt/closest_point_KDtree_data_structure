@@ -97,12 +97,12 @@ to a specific distance tolerance
                 if(distance < min_distance)
                     dis_point.emplace(std::make_pair(distance, node->point));
                 
-                if((target.get(depth%2)) < node->point.get(depth%2))
+                if((target.get(depth%2)) <= node->point.get(depth%2))
                 {
                     searchHelper(target, node->left, depth+1, dis_point, min_distance);
                     searchHelper(target, node->right, depth+1, dis_point, min_distance);
                 }
-                if((target.get(depth%2)) > node->point.get(depth%2))
+                if((target.get(depth%2)) >= node->point.get(depth%2))
                 {
                     searchHelper(target, node->right, depth+1, dis_point, min_distance);
                     searchHelper(target, node->left, depth+1, dis_point, min_distance);
