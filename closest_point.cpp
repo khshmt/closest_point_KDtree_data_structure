@@ -17,6 +17,8 @@
 #include "kdtree.hpp"
 #include <opencv2/opencv.hpp>
 
+typedef unsigned int uint;
+
 /*==========================MAIN FUNCTION================================*/
 int main()
 {
@@ -40,13 +42,21 @@ int main()
     {
         std::string num_1;
         std::string num_2;
-        
-        auto it = std::find(line.begin(), line.end(), ','); //O(log(N))
-        for(auto i=line.begin(); i != it; i++)
-            num_1.push_back(*i);
-        for(auto i=it+1; i!=line.end(); i++)
-            num_2.push_back(*i);
-        
+        bool before_comma = true;
+
+        for(uint i=0; i<line.size(); i++)
+        {
+            if(line.at(i) == ',')
+            {
+                before_comma = false;
+                continue;
+            }
+            if(before_comma)
+                num_1.push_back(line.at(i));
+            if(!before_comma)
+                num_2.push_back(line.at(i));
+        }
+
         float x = std::stof(num_1);
         float y = std::stof(num_2);
         points.push_back({x,y});
