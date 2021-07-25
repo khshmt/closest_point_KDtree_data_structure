@@ -37,8 +37,8 @@ int main()
     std::ifstream ifs("./points.txt");
     std::string line;
 
-    //O( Nlog(N) )
-    while(std::getline(ifs, line))//O(N)
+ 
+    while(std::getline(ifs, line))
     {
         std::string num_1;
         std::string num_2;
