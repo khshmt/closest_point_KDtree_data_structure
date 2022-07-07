@@ -17,34 +17,33 @@
 #include "kdtree.hpp"
 #include <opencv2/opencv.hpp>
 
-typedef unsigned int uint;
-
 /*==========================MAIN FUNCTION================================*/
 int main()
 {
-    float X, Y;
+    double X{0.0};
+    double Y{0.0};
     std::cout << "ENTER X VALUE ";
     std::cin >> X;
     std::cout << "ENTER Y VALUE ";
     std::cin >> Y;
 
-    Point p(X,Y);
+    Point p{X,Y};
     std::cout << "your point is ==> ";
     p.printPoint();
     
     std::vector<Point> points;
 
-    std::ifstream ifs("./points.txt");
+    std::ifstream ifs("/home/hshmt/Desktop/closest_point_KDtree_data_structure/points.txt");
     std::string line;
 
  
     while(std::getline(ifs, line))
     {
-        std::string num_1;
-        std::string num_2;
+        std::string num_1 = "";
+        std::string num_2 = "";
         bool before_comma = true;
 
-        for(uint i=0; i<line.size(); i++)
+        for(size_t i=0; i<line.size(); i++)
         {
             if(line.at(i) == ',')
             {
@@ -53,12 +52,12 @@ int main()
             }
             if(before_comma)
                 num_1.push_back(line.at(i));
-            if(!before_comma)
+            if(!before_comma) //after comma
                 num_2.push_back(line.at(i));
         }
 
-        float x = std::stof(num_1);
-        float y = std::stof(num_2);
+        double x = std::stof(num_1);
+        double y = std::stof(num_2);
         points.push_back({x,y});
     }
     
@@ -69,7 +68,9 @@ int main()
         tree->insert(point);
     }
 
-    std::map<float, Point> dis_point = tree->search(p);
+    std::map<double, Point> dis_point = tree->search(p);
+
+    delete tree;
     
     std::cout << "the closest point to your point is ==> ";
     dis_point.begin()->second.printPoint();
@@ -85,8 +86,8 @@ int main()
     }
     cv::circle(img, cv::Point2d(p.get(0), (500-p.get(1))), 3, cv::Scalar(0, 255, 0), -1);
     
-    float x_closest = dis_point.begin()->second.get(0);
-    float y_closest = dis_point.begin()->second.get(1);
+    double x_closest = dis_point.begin()->second.get(0);
+    double y_closest = dis_point.begin()->second.get(1);
     
     cv::line(img, cv::Point2d(p.get(0), (500-p.get(1))), cv::Point2d(x_closest, (500-y_closest)), cv::Scalar(0, 0, 255), 1 );
     
