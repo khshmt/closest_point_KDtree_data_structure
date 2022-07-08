@@ -14,31 +14,34 @@
 -------------------------
 **find the closest points of O's to x position**
 */
-#include "kdtree.hpp"
+#include <kdtree.hpp>
 #include <opencv2/opencv.hpp>
+#include <memory>
+
+#define WIDTH 500
+#define HEIGHT 500
 
 /*==========================MAIN FUNCTION================================*/
-int main()
-{
-    double X{0.0};
-    double Y{0.0};
+int main() {
+    auto X{0.0};
+    auto Y{0.0};
     std::cout << "ENTER X VALUE ";
     std::cin >> X;
     std::cout << "ENTER Y VALUE ";
     std::cin >> Y;
 
-    Point p{X,Y};
+    Point<decltype(X)> p = {X,Y};
     std::cout << "your point is ==> ";
     p.printPoint();
     
-    std::vector<Point> points;
+    std::vector<Point<decltype(X)>> points;
 
     std::ifstream ifs("/home/hshmt/Desktop/closest_point_KDtree_data_structure/points.txt");
     std::string line;
-
- 
+    
     while(std::getline(ifs, line))
     {
+        std::stringstream ss;
         std::string num_1 = "";
         std::string num_2 = "";
         bool before_comma = true;
@@ -55,22 +58,21 @@ int main()
             if(!before_comma) //after comma
                 num_2.push_back(line.at(i));
         }
+        double x, y;
+        x = stod(num_1);
+        y = stod(num_2);
 
-        double x = std::stof(num_1);
-        double y = std::stof(num_2);
         points.push_back({x,y});
     }
     
-    KdTree* tree(new KdTree());
+    std::unique_ptr<KdTree<decltype(X)>> tree =  std::make_unique<KdTree<decltype(X)>>(KdTree<decltype(X)>());
     
     for(const auto& point : points)
     {
         tree->insert(point);
     }
 
-    std::map<double, Point> dis_point = tree->search(p);
-
-    delete tree;
+    std::map<decltype(X), Point<decltype(X)>> dis_point = tree->search(p);
     
     std::cout << "the closest point to your point is ==> ";
     dis_point.begin()->second.printPoint();
@@ -78,18 +80,18 @@ int main()
     
     
     //visualize result using OpenCV
-    cv::Mat img = cv::Mat::zeros(cv::Size(500, 500), CV_8UC3);    
+    cv::Mat img = cv::Mat::zeros(cv::Size(WIDTH, HEIGHT), CV_8UC3);    
      
-    for(auto pt : points)
+    for(auto& pt : points)
     {
         cv::circle(img, cv::Point2d(pt.get(0), (500-pt.get(1))), 3, cv::Scalar(0, 255, 255), -1);
     }
     cv::circle(img, cv::Point2d(p.get(0), (500-p.get(1))), 3, cv::Scalar(0, 255, 0), -1);
     
-    double x_closest = dis_point.begin()->second.get(0);
-    double y_closest = dis_point.begin()->second.get(1);
+    auto x_closest = dis_point.begin()->second.get(0);
+    auto y_closest = dis_point.begin()->second.get(1);
     
-    cv::line(img, cv::Point2d(p.get(0), (500-p.get(1))), cv::Point2d(x_closest, (500-y_closest)), cv::Scalar(0, 0, 255), 1 );
+    cv::line(img, cv::Point2d(p.get(0), (HEIGHT-p.get(1))), cv::Point2d(x_closest, (HEIGHT-y_closest)), cv::Scalar(0, 0, 255), 1 );
     
     cv::imshow("visulaization of the result", img);
     cv::waitKey(0);
