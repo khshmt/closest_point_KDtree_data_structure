@@ -17,16 +17,17 @@ public:
         //Empty
     } 
 
-    decltype(auto) get(int dim) {
-        if(dim == 0) {
-            return this->x;
-        } else {
-            return this->y;
-        }
-    }
+    template<typename U>
+    friend std::ostream& operator <<(std::ostream& out, const Point<U>& p );
 
-    void printPoint() {
-        std::cout << "("<<this->x <<", "<<this->y <<")" << std::endl;
+    T& operator [](size_t index) {
+        if(index == 0) {
+            return this->x;
+        } else if(index == 1) {
+            return this->y;
+        } else {
+            std::cout << "OUT OF INDEX\n";
+        }
     }
 
     static decltype(auto) eculdianDistance(const Point<T>& p1, const Point<T>& p2) {
@@ -38,6 +39,11 @@ private:
     T x, y;
 };
 
+template<typename T>
+std::ostream & operator <<(std::ostream& out, const Point<T>& p ) {
+        out << "(" << p.x <<", "<< p.y << ")\n";
+        return out;
+}
 
 /*==================================================================================*/
 template<typename T>
@@ -64,7 +70,7 @@ public:
         } else {
             uint32_t cd = depth % 2;
 
-            if(point.get(cd) < node->point.get(cd)) {
+            if(point[cd] < node->point[cd]) {
                 insertHelper(node->left, depth+1, point);
             } else {	
                 insertHelper(node->right, depth+1, point);
@@ -75,7 +81,7 @@ public:
         insertHelper(root, 0 ,point);	
     }
 
-    void searchHelper(Point<T> target, std::shared_ptr<Node<T>> node, int depth, std::map<double, Point<T>>& dis_point, double min_distance) {
+    void searchHelper(Point<T> target, std::shared_ptr<Node<T>> node, int depth, std::map<T, Point<T>>& dis_point, T min_distance) {
         if(node != NULL) {   
             double distance = Point<T>::eculdianDistance(node->point, target);
 
@@ -83,25 +89,23 @@ public:
                 dis_point.emplace(std::make_pair(distance, node->point));
             }
 
-            if((target.get(depth%2)) <= node->point.get(depth%2)) {
+            if((target[depth%2]) <= node->point[depth%2]) {
                 searchHelper(target, node->left, depth+1, dis_point, min_distance);
                 searchHelper(target, node->right, depth+1, dis_point, min_distance);
             }
 
-            if((target.get(depth%2)) >= node->point.get(depth%2)) {
+            if((target[depth%2]) >= node->point[depth%2]) {
                 searchHelper(target, node->right, depth+1, dis_point, min_distance);
                 searchHelper(target, node->left, depth+1, dis_point, min_distance);
             }
         }
     }
     decltype(auto) search(Point<T> target) {
-        std::map<double, Point<T>> dis_point;
+        std::map<T, Point<T>> dis_point;
         double min_distance = std::numeric_limits<double>::max();
         searchHelper(target, root, 1, dis_point, min_distance);
         return dis_point;
     }
-	
-
 };
 
 #endif
