@@ -13,9 +13,31 @@
 template<typename T>
 class Point {
 public:
-    Point(T _x=0, T _y=0) : x{_x}, y{_y} {
-        //Empty
-    } 
+    Point(T _x=0, T _y=0) : x{_x}, y{_y} {}
+
+    Point(const Point<T>& other) {
+        this->x = other.x;
+        this->y = other.y;
+    }
+
+    Point<T>& operator =(const Point<T>& other) {
+        this->x = other.x;
+        this->y = other.y;
+        return *this;
+    }
+
+    Point(Point<T>&& other) {
+        *this = std::move(other);
+    }
+
+    Point<T>& operator =(Point<T>&& other) {
+        if(this != &other) {
+            this->x = std::move(other.x);
+            this->y = std::move(other.y);
+            other.x = other.y = 0;
+        }
+        return *this;
+    }
 
     template<typename U>
     friend std::ostream& operator <<(std::ostream& out, const Point<U>& p );
@@ -30,7 +52,7 @@ public:
         }
     }
 
-    static decltype(auto) eculdianDistance(const Point<T>& p1, const Point<T>& p2) {
+    static decltype(auto) euclideanDistance(const Point<T>& p1, const Point<T>& p2) {
         auto x_diff_sq = pow((p2.x-p1.x), 2);
         auto y_diff_sq = pow((p2.y-p1.y), 2);
         return std::sqrt(x_diff_sq+y_diff_sq);
@@ -83,7 +105,7 @@ public:
 
     void searchHelper(Point<T> target, std::shared_ptr<Node<T>> node, int depth, std::map<T, Point<T>>& dis_point, T min_distance) {
         if(node != NULL) {   
-            double distance = Point<T>::eculdianDistance(node->point, target);
+            double distance = Point<T>::euclideanDistance(node->point, target);
 
             if(distance < min_distance) {
                 dis_point.emplace(std::make_pair(distance, node->point));

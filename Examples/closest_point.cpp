@@ -18,6 +18,7 @@
 #include <opencv2/opencv.hpp>
 #include <cstring>
 #include <rapidcsv.h>
+#include <chrono>
 
 #define WIDTH 500
 #define HEIGHT 500
@@ -43,17 +44,18 @@ void readTextFile(std::vector<Point<T>>& points, const std::string& filePath) {
 }
 
 template<typename T>
-void readCsvFile(std::vector<Point<T>>& points, const std::string& filePath) {
-
+void readCsvFile(const std::string& filePath, std::vector<Point<T>>& points = std::vector<Point<T>>()) {
     std::vector<T> Xs;
     std::vector<T> Ys;
     rapidcsv::Document doc(filePath);
     Xs = doc.GetColumn<T>("X");
     Ys = doc.GetColumn<T>("Y");
     auto size = Xs.size()>Ys.size() ? Ys.size() : Xs.size();
+    points.reserve(Xs.size());
     for(size_t i=0; i<size; ++i) {
-        points.push_back({std::move(Xs[i]), std::move(Ys[i])});
+        points.emplace_back( Xs[i], Ys[i] );
     }
+    return;
 }
 
 /*==========================MAIN FUNCTION================================*/
@@ -62,6 +64,7 @@ int main(int argc, char* argv[]) {
         std::cout << "ENTER THE FILE OF POINTS\n";
         return 1;
     }
+
     auto X{0.0L};
     auto Y{0.0L};
     std::cout << "ENTER X VALUE ";
@@ -74,7 +77,7 @@ int main(int argc, char* argv[]) {
     
     std::vector<Point<decltype(X)>> points;
     
-    readCsvFile<decltype(X)>(points, argv[1]);    
+    readCsvFile<decltype(X)>(argv[1], points);    
     
     std::unique_ptr<KdTree<decltype(X)>> tree =  std::make_unique<KdTree<decltype(X)>>(KdTree<decltype(X)>());
     
@@ -88,8 +91,7 @@ int main(int argc, char* argv[]) {
     std::cout << dis_point.begin()->second;
     std::cout << "the distance from your point to the closest point is ==> "<< dis_point.begin()->first << std::endl;
     
-    
-    //visualize result using OpenCV
+
     cv::Mat img = cv::Mat::zeros(cv::Size(WIDTH, HEIGHT), CV_8UC3);    
      
     for(auto& pt : points) {
